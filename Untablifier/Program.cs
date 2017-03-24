@@ -11,24 +11,36 @@ namespace Untablifier
     {
         static void Main(string[] args)
         {
-            if (args.Count() > 0)
+            if (args.Count() == 2)
             {
-                untablifyAll(args[0]);
+                if (Directory.Exists(args[0]) == false)
+                {
+                    Console.WriteLine("Path {0} doesn't exist.", args[0]);
+                    return;
+                }
+
+                untablifyAll(args[0], args[1]);
                 Console.WriteLine("Total file(s): {0}    File(s) changed: {1}", fileProcessed, fileChanged);
+            }
+
+            else
+            {
+                Console.WriteLine(@"usage: Untablifier <targetDirectory> <fileEndWith>");
+                Console.WriteLine(@"Example: Untablifier c:\target .cs");
             }
         }
 
         static UInt32 fileProcessed = 0;
         static UInt32 fileChanged = 0;
 
-        static void untablifyAll(string path)
+        static void untablifyAll(string path, string fileEndWith)
         {
             string[] files = Directory.GetFiles(path);
 
             foreach(string file in files)
             {
                 fileProcessed++;
-                if (file.EndsWith(".cs"))
+                if (file.EndsWith(fileEndWith))
                 {
                     if (untablifyFile(file))
                         fileChanged++;
@@ -40,7 +52,7 @@ namespace Untablifier
             foreach(string folder in folders)
             {
                 Console.WriteLine("Processing folder {0} ...", folder);
-                untablifyAll(folder);
+                untablifyAll(folder, fileEndWith);
             }
         }
 
